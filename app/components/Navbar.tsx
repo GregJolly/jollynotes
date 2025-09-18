@@ -13,7 +13,7 @@ export default async function Navbar() {
             <div className="container mx-auto flex items-center justify-between px-4">
             <Link href="/">
                 <h1 className="font-bold text-3xl tracking-tighter"> 
-                    Jolly<span>Notes</span>
+                    Jolly<span className="font-extrabold text-primary">Notes</span>
                 </h1>
             </Link>
             
