@@ -7,6 +7,7 @@ import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrig
 import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 import prisma from "@/app/lib/prisma"
 import { SubmitButton } from "@/app/components/SubmitButton";
+import { revalidatePath } from "next/cache";
 
 
 async function getData(userId: string)
@@ -47,6 +48,8 @@ export  default async function Settings()
                 colorScheme: colorScheme ?? undefined
             }
         }); 
+
+        revalidatePath("/", "layout")
     }
     
     return (
@@ -84,7 +87,7 @@ export  default async function Settings()
                             </div>
                             <div className="space-y-2">
                             <Label> Color Scheme</Label>
-                            <Select defaultValue={data?.colorScheme}>
+                            <Select name="color" defaultValue={data?.colorScheme}>
                                 <SelectTrigger className="w-full">
                                     <SelectValue placeholder="Select a color" />
                                 </SelectTrigger>
