@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import prisma from "@/app/lib/prisma"
 import { CheckCircle2 } from "lucide-react";
 
 export  default function BillingPage(){
@@ -11,6 +12,17 @@ export  default function BillingPage(){
         {name: "Enjoy a seamless all-in-one experience "},
         
     ]
+
+    async function getData(userId: string){
+        const data = await prisma.subscription.findUnique({
+            where: { 
+                userId: userId
+            },
+            select:{
+
+            }
+        })
+    }
 
     return (
         <div className="max-w-md mx-auto space-y-4">
