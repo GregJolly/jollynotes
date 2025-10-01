@@ -21,9 +21,9 @@ export  default function BillingPage(){
 
                    </div>
                    <div className="mt-4 flex items-baseline font-extrabold text-6xl ">
-                        $30 <span className="text-2xl ml-1 text-muted-foreground">/mo</span>
+                        $5 <span className="text-2xl ml-1 text-muted-foreground">/mo</span>
                    </div>
-                   <p className="text-lg mt-4   text-muted-foreground"> Unlimited notes for $30 per month. </p>
+                   <p className="text-lg mt-4   text-muted-foreground"> Unlimited notes for $5 per month. </p>
 
                 </CardContent>
                 <div className="flex-1 flex flex-col justify-between px-6 pt-6 pb-8 bg-secondary rounded-lg m-1 space-y-6 sm:p-10 sm:pt-6">
