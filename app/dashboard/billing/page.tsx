@@ -2,26 +2,65 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import prisma from "@/app/lib/prisma"
 import { CheckCircle2 } from "lucide-react";
+import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
+import { getStripeSession } from "@/app/lib/stripe";
+import { redirect } from "next/navigation";
+import { StripeSubscriptionCreationButton } from "@/app/components/SubmitButton";
 
-export  default function BillingPage(){
+const featureItems = [
+    {name: "Access all features with a single subscription"},
+    {name: "Log in anytime from any device"},
+    {name: "Use multiple tools without extra cost"},
+    {name: "Enjoy a seamless all-in-one experience "},
+    
+]
 
-    const featureItems = [
-        {name: "Access all features with a single subscription"},
-        {name: "Log in anytime from any device"},
-        {name: "Use multiple tools without extra cost"},
-        {name: "Enjoy a seamless all-in-one experience "},
-        
-    ]
+async function getData(userId: string){
+    const data = await prisma.subscription.findUnique({
+        where: { 
+            userId: userId
+        },
+        select:{
+            status: true,
+            user: {
+                select:{
+                    stripeCustomerId: true
+                }
+            }
+        }
+    })
 
-    async function getData(userId: string){
-        const data = await prisma.subscription.findUnique({
+    return data
+}
+export  default async function BillingPage(){
+    const {getUser} = getKindeServerSession();
+    const user = await getUser()
+    const data =  await getData(user?.id as string); 
+
+    async function createSubscription() {
+        "use server"
+
+        const dbUser = await prisma.user.findUnique({
             where: { 
-                userId: userId
+                id: user?.id
             },
             select:{
-
+                stripeCustomerId: true
             }
         })
+
+        if (!dbUser?.stripeCustomerId){
+            throw new Error("Unable to get customer id"); 
+
+        }
+
+        const subscriptionUrl = await getStripeSession({
+            customerId: dbUser.stripeCustomerId,
+            domainUrl: 'http://localhost:3000',
+            priceId: process.env.STRIPE_PRICE_ID as string,
+        })
+
+        return redirect(subscriptionUrl); 
     }
 
     return (
@@ -51,12 +90,13 @@ export  default function BillingPage(){
                     )    
                     )}
                     </ul>
-                    <form className="w-full">
-                        <Button className="w-full">Buy Now</Button>
+                    <form className="w-full" action={createSubscription}>
+                        <StripeSubscriptionCreationButton/>
                     </form>
                 </div>
             </Card>
 
         </div>
     )
+
 }
